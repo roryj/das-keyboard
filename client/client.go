@@ -78,7 +78,9 @@ func (c *keyboardClient) DeleteSignal(id int) error {
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
-	fmt.Printf("body: %s", string(body))
+	if err != nil {
+		return err
+	}
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("received an invalid status code. Expected 200, found %d", resp.StatusCode)
