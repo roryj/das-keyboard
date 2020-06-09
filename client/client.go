@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/roryj/das-keyboard/colour"
 	"github.com/roryj/das-keyboard/keyboard"
 )
 
@@ -24,7 +25,16 @@ func NewKeyboardClient(port int) keyboardClient {
 	return keyboardClient{port: port}
 }
 
-func (c *keyboardClient) CreateSignal(req CreateSignalRequest) (CreateSignalResponse, error) {
+func (c *keyboardClient) CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.ToHexer) (CreateSignalResponse, error) {
+
+	req := CreateSignalRequest{
+		Colour:  colour.ToHex(),
+		Effect:  effect,
+		Message: "sending a message",
+		Name:    "",
+		Pid:     "DK5QPID",
+		ZoneId:  zone.GetZoneName(),
+	}
 
 	payload, err := json.Marshal(req)
 	if err != nil {
