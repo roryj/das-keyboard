@@ -27,6 +27,7 @@ var (
 	MAGENTA     = NewKeyboardColourWithRGB(255, 0, 255)
 	LAVENDAR    = NewKeyboardColourWithRGB(255, 240, 245)
 	CYAN        = NewKeyboardColourWithRGB(0, 255, 255)
+	CORAL       = NewKeyboardColourWithRGB(255, 114, 86)
 )
 
 type keyboardColour struct {
