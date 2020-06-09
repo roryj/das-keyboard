@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/roryj/das-keyboard/client"
@@ -10,12 +9,11 @@ import (
 )
 
 func main() {
-	fmt.Println("test")
 
 	c := client.NewKeyboardClient(27301)
 
 	zone := keyboard.NewKeyZone("Q")
-	r, err := c.CreateSignal(zone, keyboard.BLINK, colour.CYAN)
+	r, err := c.CreateSignal(zone, keyboard.BLINK, colour.RED)
 	if err != nil {
 		panic(err)
 	}
