@@ -83,7 +83,7 @@ func (c *keyboardClient) DeleteSignal(id int) error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("received an invalid status code. Expected 200, found %d", resp.StatusCode)
+		return fmt.Errorf("received an invalid status code. Expected 200, found %d. Body: %s", resp.StatusCode, body)
 	}
 
 	return nil
