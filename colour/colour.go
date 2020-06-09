@@ -2,7 +2,6 @@ package colour
 
 import (
 	"fmt"
-	"image/color"
 )
 
 type ToHexer interface {
@@ -31,28 +30,31 @@ var (
 )
 
 type keyboardColour struct {
-	color.Color
+	r, g, b uint8
 }
 
 func (c *keyboardColour) ToHex() string {
-	hexFormat := "#%X%X%X"
-	r, g, b, _ := c.RGBA()
+	hexFormat := "#%s%s%s"
+	r, g, b := fmt.Sprintf("%X", c.r), fmt.Sprintf("%X", c.b), fmt.Sprintf("%X", c.g)
+
+	// if the length of the string is one for any of r,g,b we add a 0 prefix
+	if len(r) < 2 {
+		r = fmt.Sprintf("0%s", r)
+	}
+	if len(g) < 2 {
+		g = fmt.Sprintf("0%s", g)
+	}
+	if len(b) < 2 {
+		b = fmt.Sprintf("0%s", b)
+	}
+
 	return fmt.Sprintf(hexFormat, r, g, b)
 }
 
 func NewKeyboardColourWithRGB(r, g, b uint8) ToHexer {
 	return &keyboardColour{
-		&color.RGBA{
-			R: r,
-			G: g,
-			B: b,
-			A: 255,
-		},
-	}
-}
-
-func NewKeyboardColourWithColor(colour color.Color) ToHexer {
-	return &keyboardColour{
-		colour,
+		r: r,
+		g: g,
+		b: b,
 	}
 }
