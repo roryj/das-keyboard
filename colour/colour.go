@@ -19,6 +19,7 @@ var (
 	TEAL        = NewKeyboardColourWithRGB(0, 128, 128)
 	MAROON      = NewKeyboardColourWithRGB(128, 0, 0)
 	WHITE_SMOKE = NewKeyboardColourWithRGB(245, 245, 245)
+	WHITE       = NewKeyboardColourWithRGB(255, 255, 255)
 	TURQUOISE   = NewKeyboardColourWithRGB(0, 245, 255)
 	TAN         = NewKeyboardColourWithRGB(255, 165, 79)
 	GOLDEN_ROD  = NewKeyboardColourWithRGB(238, 232, 170)
