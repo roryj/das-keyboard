@@ -9,7 +9,9 @@ deps:
 	go get -u ./...
 
 clean: 
-	rm -rf ./das-keyboard
+	rm -rf ./bin
 	
 build:
-	go build -o das-keyboard ./cmd
+	mkdir -p ./bin/
+	go build -o ./bin/client ./cmd
+	go build -o ./bin/server ./server
