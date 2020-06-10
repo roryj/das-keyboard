@@ -16,53 +16,56 @@ import (
 
 const localHost = "http://localhost"
 const apiVersion = "1.0"
+const pid = "DK5QPID"
+
+type Client interface {
+	CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.Hex) (SignalResponse, error)
+	DeleteSignal(id int) error
+	GetSignal(zone keyboard.Zone) (SignalResponse, error)
+}
 
 type keyboardClient struct {
 	port int
 }
 
-func NewKeyboardClient(port int) keyboardClient {
-	return keyboardClient{port: port}
+func NewKeyboardClient(port int) Client {
+	return &keyboardClient{port: port}
 }
 
-func (c *keyboardClient) CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.ToHexer) (CreateSignalResponse, error) {
+func (c *keyboardClient) CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.Hex) (SignalResponse, error) {
 
 	req := CreateSignalRequest{
-		Colour:  colour.ToHex(),
+		Colour:  colour.Hex(),
 		Effect:  effect,
-		Message: "sending a message",
+		Message: "",
 		Name:    "",
-		Pid:     "DK5QPID",
+		Pid:     pid,
 		ZoneId:  zone.GetZoneName(),
 	}
 
 	payload, err := json.Marshal(req)
 	if err != nil {
-		return CreateSignalResponse{}, err
+		return SignalResponse{}, err
 	}
 
 	result, err := http.Post(c.generateUrl("signals"), "application/json", bytes.NewBuffer(payload))
 	if err != nil {
-		return CreateSignalResponse{}, err
+		return SignalResponse{}, err
 	}
 
 	r, err := ioutil.ReadAll(result.Body)
 	if err != nil {
-		return CreateSignalResponse{}, err
+		return SignalResponse{}, err
 	}
 
-	var response CreateSignalResponse
+	var response SignalResponse
 	err = json.Unmarshal(r, &response)
-	if err != nil {
-		return CreateSignalResponse{}, err
-	}
 
-	return response, nil
+	return response, err
 }
 
 func (c *keyboardClient) DeleteSignal(id int) error {
 	u := c.generateUrl("signals", url.PathEscape(strconv.Itoa(id)))
-	fmt.Printf("url: %s\n", u)
 
 	req, err := http.NewRequest(http.MethodDelete, u, nil)
 	if err != nil {
@@ -89,6 +92,29 @@ func (c *keyboardClient) DeleteSignal(id int) error {
 	return nil
 }
 
+func (c *keyboardClient) GetSignal(zone keyboard.Zone) (SignalResponse, error) {
+	url := c.generateUrl("signals", "pid", pid, "zoneId", zone.GetZoneName())
+
+	result, err := http.Get(url)
+	if err != nil {
+		return SignalResponse{}, err
+	}
+
+	r, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		return SignalResponse{}, err
+	}
+
+	if result.StatusCode != http.StatusOK {
+		return SignalResponse{}, fmt.Errorf("expected 200, got %s", result.Status)
+	}
+
+	var response SignalResponse
+	err = json.Unmarshal(r, &response)
+
+	return response, err
+}
+
 func (c *keyboardClient) generateUrl(requestType string, pathArgs ...string) string {
 	url := fmt.Sprintf("%s:%d/api/%s/%s", localHost, c.port, apiVersion, requestType)
 
@@ -109,7 +135,7 @@ type CreateSignalRequest struct {
 }
 
 // https://www.daskeyboard.io/api-resources/signal/resource-description/
-type CreateSignalResponse struct {
+type SignalResponse struct {
 	CreateSignalRequest
 	Id         int    `json:"id"` // signals created via localhost have negative ids
 	IsArchived bool   `json:"isArchived"`

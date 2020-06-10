@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-type ToHexer interface {
-	ToHex() string
+type Hex interface {
+	Hex() string
 }
 
 var (
@@ -34,7 +34,7 @@ type keyboardColour struct {
 	r, g, b uint8
 }
 
-func (c *keyboardColour) ToHex() string {
+func (c *keyboardColour) Hex() string {
 	hexFormat := "#%s%s%s"
 	r, g, b := fmt.Sprintf("%X", c.r), fmt.Sprintf("%X", c.b), fmt.Sprintf("%X", c.g)
 
@@ -52,7 +52,7 @@ func (c *keyboardColour) ToHex() string {
 	return fmt.Sprintf(hexFormat, r, g, b)
 }
 
-func NewKeyboardColourWithRGB(r, g, b uint8) ToHexer {
+func NewKeyboardColourWithRGB(r, g, b uint8) Hex {
 	return &keyboardColour{
 		r: r,
 		g: g,
