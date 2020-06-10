@@ -12,6 +12,7 @@ import (
 
 	"github.com/roryj/das-keyboard/colour"
 	"github.com/roryj/das-keyboard/keyboard"
+	"go.uber.org/ratelimit"
 )
 
 const localHost = "http://localhost"
@@ -21,18 +22,21 @@ const pid = "DK5QPID"
 type Client interface {
 	CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.Hex) (SignalResponse, error)
 	DeleteSignal(id int) error
+	DeleteSignalAtZone(zone keyboard.Zone) error
 	GetSignal(zone keyboard.Zone) (SignalResponse, error)
 }
 
 type keyboardClient struct {
-	port int
+	port    int
+	limiter ratelimit.Limiter
 }
 
 func NewKeyboardClient(port int) Client {
-	return &keyboardClient{port: port}
+	return &keyboardClient{port: port, limiter: ratelimit.New(20)}
 }
 
 func (c *keyboardClient) CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.Hex) (SignalResponse, error) {
+	c.limiter.Take()
 
 	req := CreateSignalRequest{
 		Colour:  colour.Hex(),
@@ -65,6 +69,7 @@ func (c *keyboardClient) CreateSignal(zone keyboard.Zone, effect keyboard.KeyEff
 }
 
 func (c *keyboardClient) DeleteSignal(id int) error {
+	c.limiter.Take()
 	u := c.generateUrl("signals", url.PathEscape(strconv.Itoa(id)))
 
 	req, err := http.NewRequest(http.MethodDelete, u, nil)
@@ -92,7 +97,37 @@ func (c *keyboardClient) DeleteSignal(id int) error {
 	return nil
 }
 
+func (c *keyboardClient) DeleteSignalAtZone(zone keyboard.Zone) error {
+	c.limiter.Take()
+	u := c.generateUrl("signals", "pid", pid, "zoneid", zone.GetZoneName())
+
+	req, err := http.NewRequest(http.MethodDelete, u, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("content-type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("received an invalid status code. Expected 200, found %d. Body: %s", resp.StatusCode, body)
+	}
+
+	return nil
+}
+
 func (c *keyboardClient) GetSignal(zone keyboard.Zone) (SignalResponse, error) {
+	c.limiter.Take()
 	url := c.generateUrl("signals", "pid", pid, "zoneId", zone.GetZoneName())
 
 	result, err := http.Get(url)
