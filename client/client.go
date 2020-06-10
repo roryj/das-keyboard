@@ -24,6 +24,7 @@ type Client interface {
 	DeleteSignal(id int) error
 	DeleteSignalAtZone(zone keyboard.Zone) error
 	GetSignal(zone keyboard.Zone) (SignalResponse, error)
+	ClearAllSignals()
 }
 
 type keyboardClient struct {
@@ -148,6 +149,16 @@ func (c *keyboardClient) GetSignal(zone keyboard.Zone) (SignalResponse, error) {
 	err = json.Unmarshal(r, &response)
 
 	return response, err
+}
+
+func (c *keyboardClient) ClearAllSignals() {
+	var x, y uint
+	for x = 0; x < 24; x++ {
+		for y = 0; y < 6; y++ {
+			z := keyboard.NewXYZone(x, y)
+			_ = c.DeleteSignalAtZone(z)
+		}
+	}
 }
 
 func (c *keyboardClient) generateUrl(requestType string, pathArgs ...string) string {
