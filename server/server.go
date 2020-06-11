@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -60,8 +62,12 @@ func clearSignals(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	port := flag.Int("port", 8080, "the port to run the local server on")
+
+	log.Printf("starting server on port %d", port)
+
 	http.HandleFunc("/", showPattern)
 	http.HandleFunc("/clear", clearSignals)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
