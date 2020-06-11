@@ -15,7 +15,7 @@ type keyZone struct {
 }
 
 func NewKeyZone(key string) Zone {
-	keyCode := key
+	keyCode := strings.ToUpper(key)
 	if !strings.HasPrefix(keyCode, "KEY_") {
 		keyCode = fmt.Sprintf("KEY_%s", key)
 	}
