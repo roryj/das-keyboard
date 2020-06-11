@@ -15,3 +15,4 @@ build:
 	mkdir -p ./bin/
 	go build -o ./bin/client ./cmd
 	go build -o ./bin/server ./server
+	go build -o ./bin/editor ./editor
