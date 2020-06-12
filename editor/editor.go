@@ -1,13 +1,18 @@
 package main
 
 import (
+	"flag"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
+
+	"github.com/roryj/das-keyboard/editor/parser"
 )
 
 func main() {
+	output_file_path := flag.String("output", "result.xy", "the file to save the parsed file in")
+	flag.Parse()
 
 	file, err := ioutil.TempFile(os.TempDir(), "*")
 	if err != nil {
@@ -30,17 +35,27 @@ func main() {
 		panic(err)
 	}
 
-	log.Println("read bytes")
-	log.Println(string(bytes))
+	// validate the result can be parsed
+	_, err = parser.Parse(bytes)
+	if err != nil {
+		log.Fatalf("the resulting file is not parseable. %v", err)
+		panic(err)
+	}
+
+	// write bytes to resulting file
+	err = ioutil.WriteFile(*output_file_path, bytes, 0644)
+	if err != nil {
+		log.Fatalf("unable to write file data to %s", *output_file_path)
+		panic(err)
+	}
 }
 
-const baseTemplate = `
-[WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] 
-[WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] 
-[WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] 
-[WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] 
-[WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] 
-[WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] [WHITE] 
+const baseTemplate = `|WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE|
+|WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE|
+|WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE|
+|WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE|
+|WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE|
+|WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE| |WHITE|
 `
 
 // DefaultEditor is code because im using windows
