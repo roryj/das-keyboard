@@ -30,6 +30,14 @@ var (
 	CORAL       = NewKeyboardColourWithRGB(255, 114, 86)
 )
 
+var ColourMap map[string]Hex = map[string]Hex{
+	"red":    RED,
+	"green":  GREEN,
+	"blue":   BLUE,
+	"purple": PURPLE,
+	"white":  WHITE,
+}
+
 type keyboardColour struct {
 	r, g, b uint8
 }
