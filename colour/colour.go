@@ -44,7 +44,7 @@ type keyboardColour struct {
 
 func (c *keyboardColour) Hex() string {
 	hexFormat := "#%s%s%s"
-	r, g, b := fmt.Sprintf("%X", c.r), fmt.Sprintf("%X", c.b), fmt.Sprintf("%X", c.g)
+	r, g, b := fmt.Sprintf("%X", c.r), fmt.Sprintf("%X", c.g), fmt.Sprintf("%X", c.b)
 
 	// if the length of the string is one for any of r,g,b we add a 0 prefix
 	if len(r) < 2 {
