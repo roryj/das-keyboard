@@ -29,17 +29,23 @@ func main() {
 		log.Fatalf("failed to write base template to file. %v", err)
 	}
 
-	bytes, err := CaptureInputFromEditor(file)
-	if err != nil {
-		log.Fatalf("failed to read the file input. %v", err)
-		panic(err)
-	}
+	var bytes []byte
 
-	// validate the result can be parsed
-	_, err = parser.Parse(bytes)
-	if err != nil {
-		log.Fatalf("the resulting file is not parseable. %v", err)
-		panic(err)
+	for {
+		bytes, err = CaptureInputFromEditor(file)
+		if err != nil {
+			log.Fatalf("failed to read the file input. %v", err)
+			panic(err)
+		}
+
+		// validate the result can be parsed
+		_, err = parser.Parse(bytes)
+		if err != nil {
+			log.Fatalf("the resulting file is not parseable. %v. Retry", err)
+			continue
+		}
+
+		break
 	}
 
 	// write bytes to resulting file
