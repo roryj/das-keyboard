@@ -77,7 +77,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 			delay = time.Duration(i) * time.Second
 		}
 	}
-	log.Printf("setting delay of %ds", delay)
+	log.Printf("setting delay of %fs", delay.Seconds())
 
 	paths, ok := query["path"]
 	if !ok {
@@ -125,6 +125,8 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 			case <-closeSignal:
 				log.Printf("received close signal. Finishing animation")
 				animating = false
+				// clear the signals again because it could have been editing when the previous signal clear was called
+				keyboardClient.ClearAllSignals()
 				return
 			case <-time.After(delay):
 				break
@@ -152,10 +154,10 @@ func drawImage(img images.Image, keyEffect keyboard.KeyEffect) {
 
 func clearSignals(w http.ResponseWriter, r *http.Request) {
 	log.Printf("received clear request. Starting clearing now")
-	keyboardClient.ClearAllSignals()
 	if animating {
 		closeSignal <- true
 	}
+	keyboardClient.ClearAllSignals()
 }
 
 func main() {
