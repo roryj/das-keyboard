@@ -12,12 +12,12 @@ import (
 const keyboardRows = 6
 const keyboardColumns = 24
 
-func Parse(input []byte) (images.Image, error) {
+func Parse(input []byte) (images.KeyboardImage, error) {
 	log.Println("processed input from file")
 	text := string(input)
 
 	// now we take that and turn it into an image
-	final_image := images.Image{}
+	final_image := images.KeyboardImage{}
 
 	for i, line := range strings.Split(text, "\n") {
 		if line == "" {
@@ -29,7 +29,7 @@ func Parse(input []byte) (images.Image, error) {
 		// tokens are in the format |<colour>|
 		tokens := strings.Split(line, " ")
 		if len(tokens) != keyboardColumns {
-			return images.Image{}, fmt.Errorf("invalid number of columns in line %d of the file. Expected %d, got %d", i, keyboardColumns, len(tokens))
+			return images.KeyboardImage{}, fmt.Errorf("invalid number of columns in line %d of the file. Expected %d, got %d", i, keyboardColumns, len(tokens))
 		}
 		// log.Printf("tokens: %v\n", tokens)
 		for i, t := range strings.Split(line, " ") {
@@ -37,7 +37,7 @@ func Parse(input []byte) (images.Image, error) {
 
 			c, ok := colour.ColourMap[strings.ToLower(colour_string)]
 			if !ok {
-				return images.Image{}, fmt.Errorf("encountered an invalid colour %s @ %d, %s", colour_string, i, t)
+				return images.KeyboardImage{}, fmt.Errorf("encountered an invalid colour %s @ %d, %s", colour_string, i, t)
 			}
 
 			row[i] = c
@@ -46,7 +46,7 @@ func Parse(input []byte) (images.Image, error) {
 	}
 
 	if len(final_image) != 6 {
-		return images.Image{}, fmt.Errorf("ended up with an invalid number of rows. Expected %d, got %d", keyboardRows, len(final_image))
+		return images.KeyboardImage{}, fmt.Errorf("ended up with an invalid number of rows. Expected %d, got %d", keyboardRows, len(final_image))
 	}
 
 	return final_image, nil

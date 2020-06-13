@@ -4,19 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/roryj/das-keyboard/client"
 	"github.com/roryj/das-keyboard/images"
 	"github.com/roryj/das-keyboard/keyboard"
 )
 
 func main() {
 
-	c := client.NewKeyboardClient(27301)
+	c := keyboard.NewKeyboardClient(27301)
 
 	makeCanadaFlag(c, images.CANADA_FLAG)
 }
 
-func makeCanadaFlag(c client.Client, img images.Image) {
+func makeCanadaFlag(c keyboard.Client, img images.KeyboardImage) {
 	for y, row := range img {
 		for x, colour := range row {
 			z := keyboard.NewXYZone(uint(x)+1, uint(y))

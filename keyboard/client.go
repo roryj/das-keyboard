@@ -1,4 +1,4 @@
-package client
+package keyboard
 
 import (
 	"bytes"
@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/roryj/das-keyboard/colour"
-	"github.com/roryj/das-keyboard/keyboard"
 	"go.uber.org/ratelimit"
 )
 
@@ -20,10 +19,10 @@ const apiVersion = "1.0"
 const pid = "DK5QPID"
 
 type Client interface {
-	CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.Hex) (SignalResponse, error)
+	CreateSignal(zone Zone, effect KeyEffect, colour colour.Hex) (SignalResponse, error)
 	DeleteSignal(id int) error
-	DeleteSignalAtZone(zone keyboard.Zone) error
-	GetSignal(zone keyboard.Zone) (SignalResponse, error)
+	DeleteSignalAtZone(zone Zone) error
+	GetSignal(zone Zone) (SignalResponse, error)
 	ClearAllSignals()
 }
 
@@ -36,7 +35,7 @@ func NewKeyboardClient(port int) Client {
 	return &keyboardClient{port: port, limiter: ratelimit.New(20)}
 }
 
-func (c *keyboardClient) CreateSignal(zone keyboard.Zone, effect keyboard.KeyEffect, colour colour.Hex) (SignalResponse, error) {
+func (c *keyboardClient) CreateSignal(zone Zone, effect KeyEffect, colour colour.Hex) (SignalResponse, error) {
 	c.limiter.Take()
 
 	req := CreateSignalRequest{
@@ -98,7 +97,7 @@ func (c *keyboardClient) DeleteSignal(id int) error {
 	return nil
 }
 
-func (c *keyboardClient) DeleteSignalAtZone(zone keyboard.Zone) error {
+func (c *keyboardClient) DeleteSignalAtZone(zone Zone) error {
 	c.limiter.Take()
 	u := c.generateUrl("signals", "pid", pid, "zoneid", zone.GetZoneName())
 
@@ -127,7 +126,7 @@ func (c *keyboardClient) DeleteSignalAtZone(zone keyboard.Zone) error {
 	return nil
 }
 
-func (c *keyboardClient) GetSignal(zone keyboard.Zone) (SignalResponse, error) {
+func (c *keyboardClient) GetSignal(zone Zone) (SignalResponse, error) {
 	c.limiter.Take()
 	url := c.generateUrl("signals", "pid", pid, "zoneId", zone.GetZoneName())
 
@@ -155,7 +154,7 @@ func (c *keyboardClient) ClearAllSignals() {
 	var x, y uint
 	for x = 0; x < 24; x++ {
 		for y = 0; y < 6; y++ {
-			z := keyboard.NewXYZone(x, y)
+			z := NewXYZone(x, y)
 			_ = c.DeleteSignalAtZone(z)
 		}
 	}
@@ -172,12 +171,12 @@ func (c *keyboardClient) generateUrl(requestType string, pathArgs ...string) str
 }
 
 type CreateSignalRequest struct {
-	Name    string             `json:"name"`
-	Message string             `json:"message"`
-	ZoneId  string             `json:"zoneId"`
-	Colour  string             `json:"color"` // should have some colours defined
-	Effect  keyboard.KeyEffect `json:"effect"`
-	Pid     string             `json:"pid"` // always DK5QPID?
+	Name    string    `json:"name"`
+	Message string    `json:"message"`
+	ZoneId  string    `json:"zoneId"`
+	Colour  string    `json:"color"` // should have some colours defined
+	Effect  KeyEffect `json:"effect"`
+	Pid     string    `json:"pid"` // always DK5QPID?
 }
 
 // https://www.daskeyboard.io/api-resources/signal/resource-description/

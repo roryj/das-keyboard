@@ -11,18 +11,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/roryj/das-keyboard/client"
 	"github.com/roryj/das-keyboard/editor/parser"
 	"github.com/roryj/das-keyboard/images"
 	"github.com/roryj/das-keyboard/keyboard"
 )
 
-var keyboardClient client.Client
+var keyboardClient keyboard.Client
 var closeSignal chan (bool)
 var animating bool
 
 func init() {
-	keyboardClient = client.NewKeyboardClient(27301)
+	keyboardClient = keyboard.NewKeyboardClient(27301)
 	closeSignal = make(chan bool)
 	animating = false
 }
@@ -85,7 +84,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var images []images.Image
+	var images []images.KeyboardImage
 
 	for _, path := range paths {
 		f, err := os.Open(path)
@@ -139,7 +138,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func drawImage(img images.Image, keyEffect keyboard.KeyEffect) {
+func drawImage(img images.KeyboardImage, keyEffect keyboard.KeyEffect) {
 	log.Printf("drawing an image with the effect %s", keyEffect)
 	for y, row := range img {
 		for x, colour := range row {

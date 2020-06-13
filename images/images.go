@@ -2,9 +2,13 @@ package images
 
 import "github.com/roryj/das-keyboard/colour"
 
-type Image [][]colour.Hex
+type KeyboardImage [][]colour.Hex
 
-var CANADA_FLAG Image = Image{
+func (k *KeyboardImage) CompareXY(x int, y int, other *KeyboardImage) bool {
+	return (*k)[x][y] == (*other)[x][y]
+}
+
+var CANADA_FLAG KeyboardImage = KeyboardImage{
 	{
 		colour.RED, colour.RED, colour.RED, colour.RED, colour.RED, colour.WHITE, colour.WHITE, colour.WHITE, colour.WHITE, colour.WHITE, colour.RED, colour.RED, colour.WHITE, colour.WHITE, colour.WHITE, colour.WHITE, colour.WHITE, colour.RED, colour.RED, colour.RED, colour.RED, colour.RED, colour.RED,
 	},
