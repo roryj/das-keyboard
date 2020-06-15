@@ -140,9 +140,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 
 func clearSignals(w http.ResponseWriter, r *http.Request) {
 	log.Infof("received clear request. Starting clearing now")
-	if animating {
-		closeSignal <- true
-	}
+	closeSignal <- true
 	keyboardDisplay.Clear()
 }
 
