@@ -19,7 +19,7 @@ type Display struct {
 }
 
 func NewDisplay(client keyboard.Client) *Display {
-	keyUpdateLimiter := ratelimit.New(10)
+	keyUpdateLimiter := ratelimit.New(20)
 	refreshLimiter := ratelimit.New(10)
 
 	return &Display{
