@@ -11,9 +11,13 @@ import (
 )
 
 func main() {
-	output_file_path := flag.String("output", "result.xy", "the file to save the parsed file in")
+	output_file_path := flag.String("output", "", "the file to save the parsed file in")
 	from_file_path := flag.String("from", "", "the file in which to open as the template")
 	flag.Parse()
+
+	if *output_file_path == "" {
+		log.Fatal("from_file_path is a required field")
+	}
 
 	file, err := ioutil.TempFile(os.TempDir(), "*")
 	if err != nil {
