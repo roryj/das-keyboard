@@ -9,6 +9,7 @@ type Hex interface {
 }
 
 var (
+	NONE        = NewNoColour()
 	RED         = NewKeyboardColourWithRGB(255, 0, 0)
 	GREEN       = NewKeyboardColourWithRGB(0, 128, 0)
 	BLUE        = NewKeyboardColourWithRGB(0, 0, 255)
@@ -31,11 +32,26 @@ var (
 )
 
 var ColourMap map[string]Hex = map[string]Hex{
+	"none":   NONE,
 	"red":    RED,
 	"green":  GREEN,
 	"blue":   BLUE,
 	"purple": PURPLE,
 	"white":  WHITE,
+}
+
+type noColour struct{}
+
+func (c *noColour) Hex() string {
+	return "none"
+}
+
+func (c *noColour) Equals(other Hex) bool {
+	return c.Hex() == other.Hex()
+}
+
+func NewNoColour() Hex {
+	return &noColour{}
 }
 
 type keyboardColour struct {
