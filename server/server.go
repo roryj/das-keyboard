@@ -90,24 +90,27 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Infof("paths to files: %v", paths)
+
 	var images []images.KeyboardImage
 
 	for _, path := range paths {
 		f, err := os.Open(path)
 		if err != nil {
-			break
+			log.Warnf("unable to open file. %v", err)
+			continue
 		}
 
 		bytes, err := ioutil.ReadAll(f)
 		if err != nil {
-			log.Warnf("failed reading file")
-			break
+			log.Warnf("failed reading file. %v", err)
+			continue
 		}
 
 		img, err := parser.Parse(bytes)
 		if err != nil {
 			log.Warnf("the file was not parseable. %v", err)
-			break
+			continue
 		}
 
 		images = append(images, img)
