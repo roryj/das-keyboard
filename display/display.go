@@ -12,7 +12,7 @@ import (
 type Display struct {
 	client           keyboard.Client
 	inputBuffer      images.KeyboardImage
-	currentBuffer    images.KeyboardImage
+	displayBuffer    images.KeyboardImage
 	updateChannel    chan (images.KeyboardImage)
 	keyUpdateLimiter ratelimit.Limiter
 	refreshLimiter   ratelimit.Limiter
@@ -26,7 +26,7 @@ func NewDisplay(client keyboard.Client) *Display {
 		client:      client,
 		inputBuffer: images.Copy(images.CLEAR_KEYBOARD),
 		// start off with a different image value for the current buffer so that the display will be cleared automatically on the first loop
-		currentBuffer:    images.Copy(images.CANADA_FLAG),
+		displayBuffer:    images.Copy(images.CANADA_FLAG),
 		updateChannel:    make(chan images.KeyboardImage),
 		keyUpdateLimiter: keyUpdateLimiter,
 		refreshLimiter:   refreshLimiter,
@@ -50,11 +50,11 @@ func (d *Display) Start() {
 		// log.Printf("display buffer: %s", d.currentBuffer.String())
 		// log.Printf("input buffer: %s", d.inputBuffer.String())
 
-		for rowIndex, row := range d.currentBuffer {
+		for rowIndex, row := range d.displayBuffer {
 			log.Debugf("messing with row %d: %v", rowIndex, row)
 			log.Debugf("input buffer at row: %v", d.inputBuffer[rowIndex])
 			for columnIndex := range row {
-				if d.currentBuffer.CompareXY(rowIndex, columnIndex, d.inputBuffer) {
+				if d.displayBuffer.CompareXY(rowIndex, columnIndex, d.inputBuffer) {
 					log.Debugf("no update needed for %d,%d", rowIndex, columnIndex)
 				} else {
 					newColour := d.inputBuffer[rowIndex][columnIndex]
@@ -74,7 +74,7 @@ func (d *Display) Start() {
 						}
 					}
 
-					d.currentBuffer.StealXY(rowIndex, columnIndex, d.inputBuffer)
+					d.displayBuffer.StealXY(rowIndex, columnIndex, d.inputBuffer)
 				}
 			}
 		}
