@@ -11,17 +11,19 @@ import (
 	"strings"
 	"time"
 
+	"github.com/roryj/das-keyboard/display"
 	"github.com/roryj/das-keyboard/editor/parser"
 	"github.com/roryj/das-keyboard/images"
 	"github.com/roryj/das-keyboard/keyboard"
 )
 
-var keyboardClient keyboard.Client
+var keyboardDisplay *display.Display
 var closeSignal chan (bool)
 var animating bool
 
 func init() {
-	keyboardClient = keyboard.NewKeyboardClient(27301)
+	client := keyboard.NewKeyboardClient(27301)
+	keyboardDisplay = display.NewDisplay(client)
 	closeSignal = make(chan bool)
 	animating = false
 }
@@ -44,7 +46,7 @@ func showPattern(w http.ResponseWriter, r *http.Request) {
 
 	switch strings.ToLower(pattern[0]) {
 	case "canada":
-		drawImage(images.CANADA_FLAG, keyboard.BREATHE)
+		keyboardDisplay.Set(images.CANADA_FLAG)
 		w.WriteHeader(http.StatusOK)
 		return
 	}
@@ -118,14 +120,14 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 			animating = true
 
 			imgToDraw := images[index]
-			drawImage(imgToDraw, effect)
+			keyboardDisplay.Set(imgToDraw)
 
 			select {
 			case <-closeSignal:
 				log.Printf("received close signal. Finishing animation")
 				animating = false
 				// clear the signals again because it could have been editing when the previous signal clear was called
-				keyboardClient.ClearAllSignals()
+				keyboardDisplay.Clear()
 				return
 			case <-time.After(delay):
 				break
@@ -138,30 +140,20 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func drawImage(img images.KeyboardImage, keyEffect keyboard.KeyEffect) {
-	log.Printf("drawing an image with the effect %s", keyEffect)
-	for y, row := range img {
-		for x, colour := range row {
-			z := keyboard.NewXYZone(uint(x)+1, uint(y))
-			_, err := keyboardClient.CreateSignal(z, keyEffect, colour)
-			if err != nil {
-				log.Fatalf("err: %v\n", err)
-			}
-		}
-	}
-}
-
 func clearSignals(w http.ResponseWriter, r *http.Request) {
 	log.Printf("received clear request. Starting clearing now")
 	if animating {
 		closeSignal <- true
 	}
-	keyboardClient.ClearAllSignals()
+	keyboardDisplay.Clear()
 }
 
 func main() {
 	port := flag.Int("port", 8080, "the port to run the local server on")
 	flag.Parse()
+
+	log.Printf("starting display update thread")
+	go keyboardDisplay.Start()
 
 	log.Printf("starting server on port %d", *port)
 
