@@ -23,9 +23,10 @@ func NewDisplay(client keyboard.Client) *Display {
 	refreshLimiter := ratelimit.New(10)
 
 	return &Display{
-		client:           client,
-		inputBuffer:      images.Copy(images.CLEAR_KEYBOARD),
-		currentBuffer:    images.Copy(images.CLEAR_KEYBOARD),
+		client:      client,
+		inputBuffer: images.Copy(images.CLEAR_KEYBOARD),
+		// start off with a different image value for the current buffer so that the display will be cleared automatically on the first loop
+		currentBuffer:    images.Copy(images.CANADA_FLAG),
 		updateChannel:    make(chan images.KeyboardImage),
 		keyUpdateLimiter: keyUpdateLimiter,
 		refreshLimiter:   refreshLimiter,
