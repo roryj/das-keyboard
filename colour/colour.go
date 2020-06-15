@@ -39,6 +39,7 @@ var ColourMap map[string]Hex = map[string]Hex{
 	"blue":   BLUE,
 	"purple": PURPLE,
 	"white":  WHITE,
+	"yellow": YELLOW,
 }
 
 type noColour struct{}
