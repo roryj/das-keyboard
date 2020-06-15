@@ -14,6 +14,7 @@ import (
 	"go.uber.org/ratelimit"
 )
 
+const DefaultPort = 27301
 const localHost = "http://localhost"
 const apiVersion = "1.0"
 const pid = "DK5QPID"
