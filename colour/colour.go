@@ -6,6 +6,7 @@ import (
 
 type Hex interface {
 	Hex() string
+	Equals(other Hex) bool
 }
 
 var (
@@ -74,6 +75,10 @@ func (c *keyboardColour) Hex() string {
 	}
 
 	return fmt.Sprintf(hexFormat, r, g, b)
+}
+
+func (c *keyboardColour) Equals(other Hex) bool {
+	return c.Hex() == other.Hex()
 }
 
 func NewKeyboardColourWithRGB(r, g, b uint8) Hex {
