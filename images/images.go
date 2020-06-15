@@ -10,6 +10,26 @@ func (k *KeyboardImage) CompareXY(x int, y int, other *KeyboardImage) bool {
 
 func (k *KeyboardImage) StealXY(x int, y int, other *KeyboardImage) {
 	(*k)[x][y] = (*other)[x][y]
+
+var CLEAR_KEYBOARD KeyboardImage = KeyboardImage{
+	{
+		colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE,
+	},
+	{
+		colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE,
+	},
+	{
+		colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE,
+	},
+	{
+		colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE,
+	},
+	{
+		colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE,
+	},
+	{
+		colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE, colour.NONE,
+	},
 }
 
 var CANADA_FLAG KeyboardImage = KeyboardImage{
