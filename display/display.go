@@ -1,7 +1,7 @@
 package display
 
 import (
-	"log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/roryj/das-keyboard/colour"
 	"github.com/roryj/das-keyboard/images"
@@ -22,8 +22,6 @@ func NewDisplay(client keyboard.Client) *Display {
 	keyUpdateLimiter := ratelimit.New(10)
 	refreshLimiter := ratelimit.New(10)
 
-	// og := images.CLEAR_KEYBOARD
-
 	return &Display{
 		client:           client,
 		inputBuffer:      images.Copy(images.CLEAR_KEYBOARD),
@@ -35,9 +33,9 @@ func NewDisplay(client keyboard.Client) *Display {
 }
 
 func (d *Display) Set(input images.KeyboardImage) {
-	log.Printf("recieved input!")
+	log.Info("recieved image to display")
 	d.updateChannel <- input
-	log.Printf("image data to channel")
+	log.Infof("image data written to channel")
 }
 
 func (d *Display) Start() {
@@ -52,27 +50,26 @@ func (d *Display) Start() {
 		// log.Printf("input buffer: %s", d.inputBuffer.String())
 
 		for rowIndex, row := range d.currentBuffer {
-			// log.Printf("messing with row %d: %v", rowIndex, row)
-			// log.Printf("input buffer at row: %v", (*d.inputBuffer)[rowIndex])
+			log.Debugf("messing with row %d: %v", rowIndex, row)
+			log.Debugf("input buffer at row: %v", d.inputBuffer[rowIndex])
 			for columnIndex := range row {
-				// log.Printf("messing with coloumn %d: %v", columnIndex, currColour)
 				if d.currentBuffer.CompareXY(rowIndex, columnIndex, d.inputBuffer) {
-					// log.Printf("no update needed for %d,%d", rowIndex, columnIndex)
+					log.Debugf("no update needed for %d,%d", rowIndex, columnIndex)
 				} else {
 					newColour := d.inputBuffer[rowIndex][columnIndex]
 					d.keyUpdateLimiter.Take()
-					// log.Printf("update needed for %d,%d", rowIndex, columnIndex)
+					log.Debugf("update needed for %d,%d", rowIndex, columnIndex)
 					z := keyboard.NewXYZone(uint(columnIndex)+1, uint(rowIndex))
 
 					if newColour == colour.NONE {
 						err := d.client.DeleteSignalAtZone(z)
 						if err != nil {
-							log.Printf("failed to clear signal @ %s: %v", z.GetZoneName(), err)
+							log.Warnf("failed to clear signal @ %s: %v", z.GetZoneName(), err)
 						}
 					} else {
 						_, err := d.client.CreateSignal(z, keyboard.SET_COLOUR, newColour)
 						if err != nil {
-							log.Printf("failed to update signal: %v", err)
+							log.Warnf("failed to update signal: %v", err)
 						}
 					}
 
@@ -85,13 +82,13 @@ func (d *Display) Start() {
 }
 
 func (d *Display) Clear() {
-	log.Printf("clear: %s", images.CLEAR_KEYBOARD.String())
+	log.Infof("Clearing screen")
 	d.Set(images.Copy(images.CLEAR_KEYBOARD))
 }
 
 func (d *Display) listenForChange() {
 	for newInput := range d.updateChannel {
-		log.Printf("received update! %s", newInput.String())
+		log.Infof("received update! %s", newInput.String())
 		d.inputBuffer = newInput
 	}
 }

@@ -4,12 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/roryj/das-keyboard/display"
 	"github.com/roryj/das-keyboard/editor/parser"
@@ -22,6 +23,8 @@ var closeSignal chan (bool)
 var animating bool
 
 func init() {
+	log.SetOutput(os.Stdout)
+
 	client := keyboard.NewKeyboardClient(27301)
 	keyboardDisplay = display.NewDisplay(client)
 	closeSignal = make(chan bool)
@@ -29,7 +32,7 @@ func init() {
 }
 
 func showPattern(w http.ResponseWriter, r *http.Request) {
-	log.Printf("received request %v", r.URL.Query())
+	log.Infof("received request %v", r.URL.Query())
 	query := r.URL.Query()
 
 	pattern, ok := query["pattern"]
@@ -64,7 +67,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 	} else {
 		effect = keyboard.KeyEffect(strings.ToUpper(e[0]))
 	}
-	log.Printf("using effect %s", effect)
+	log.Infof("using effect %s", effect)
 
 	var delay time.Duration
 	d, ok := query["delaySeconds"]
@@ -78,7 +81,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 			delay = time.Duration(i) * time.Second
 		}
 	}
-	log.Printf("setting delay of %fs", delay.Seconds())
+	log.Infof("setting delay of %fs", delay.Seconds())
 
 	paths, ok := query["path"]
 	if !ok {
@@ -96,13 +99,13 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 
 		bytes, err := ioutil.ReadAll(f)
 		if err != nil {
-			log.Printf("failed reading file")
+			log.Warnf("failed reading file")
 			break
 		}
 
 		img, err := parser.Parse(bytes)
 		if err != nil {
-			log.Printf("the file was not parseable. %v", err)
+			log.Warnf("the file was not parseable. %v", err)
 			break
 		}
 
@@ -117,17 +120,12 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		index := 0
 		for {
-			animating = true
-
 			imgToDraw := images[index]
 			keyboardDisplay.Set(imgToDraw)
 
 			select {
 			case <-closeSignal:
-				log.Printf("received close signal. Finishing animation")
-				animating = false
-				// clear the signals again because it could have been editing when the previous signal clear was called
-				keyboardDisplay.Clear()
+				log.Infof("received close signal. Finishing animation")
 				return
 			case <-time.After(delay):
 				break
@@ -141,7 +139,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 }
 
 func clearSignals(w http.ResponseWriter, r *http.Request) {
-	log.Printf("received clear request. Starting clearing now")
+	log.Infof("received clear request. Starting clearing now")
 	if animating {
 		closeSignal <- true
 	}
@@ -150,12 +148,21 @@ func clearSignals(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	port := flag.Int("port", 8080, "the port to run the local server on")
+	verbose := flag.Bool("verbose", false, "whether to display verbose logging")
 	flag.Parse()
 
-	log.Printf("starting display update thread")
+	logLevel := log.InfoLevel
+	if *verbose {
+		logLevel = log.DebugLevel
+	}
+	log.SetLevel(logLevel)
+
+	log.Infof("logging with log level: %s", logLevel.String())
+
+	log.Infof("starting display update thread")
 	go keyboardDisplay.Start()
 
-	log.Printf("starting server on port %d", *port)
+	log.Infof("starting server on port %d", *port)
 
 	http.HandleFunc("/", showPattern)
 	http.HandleFunc("/clear", clearSignals)
