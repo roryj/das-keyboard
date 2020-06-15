@@ -50,6 +50,10 @@ func showPattern(w http.ResponseWriter, r *http.Request) {
 
 	switch strings.ToLower(pattern[0]) {
 	case "canada":
+		// this should probably be in a central place, even within the display struct probably makes sense
+		if animating {
+			closeSignal <- true
+		}
 		keyboardDisplay.Set(images.CANADA_FLAG)
 		w.WriteHeader(http.StatusOK)
 		return
@@ -121,7 +125,15 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if animating {
+		log.Infof("already doing an animation. Sending clear signal to stop it!")
+		closeSignal <- true
+		// sleep to avoid having the wrong animation getting the close signal
+		time.Sleep(delay)
+	}
+
 	go func() {
+		animating = true
 		index := 0
 		for {
 			imgToDraw := images[index]
@@ -130,6 +142,7 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 			select {
 			case <-closeSignal:
 				log.Infof("received close signal. Finishing animation")
+				animating = false
 				return
 			case <-time.After(delay):
 				break
@@ -144,7 +157,9 @@ func loadPattern(w http.ResponseWriter, r *http.Request) {
 
 func clearSignals(w http.ResponseWriter, r *http.Request) {
 	log.Infof("received clear request. Starting clearing now")
-	closeSignal <- true
+	if animating {
+		closeSignal <- true
+	}
 	keyboardDisplay.Clear()
 }
 
