@@ -22,8 +22,13 @@ func Copy(img KeyboardImage) KeyboardImage {
 	return result
 }
 
-func (k *KeyboardImage) StealXY(x int, y int, other *KeyboardImage) {
-	(*k)[x][y] = (*other)[x][y]
+func (k KeyboardImage) CompareXY(row int, col int, other KeyboardImage) bool {
+	return k[row][col].Equals(other[row][col])
+}
+
+func (k KeyboardImage) StealXY(row int, col int, other KeyboardImage) {
+	k[row][col] = other[row][col]
+}
 
 func (k *KeyboardImage) String() string {
 	var result string
