@@ -25,8 +25,9 @@ var animating bool
 func init() {
 	log.SetOutput(os.Stdout)
 
-	client := keyboard.NewKeyboardClient(27301)
+	client := keyboard.NewKeyboardClient(keyboard.DefaultPort)
 	keyboardDisplay = display.NewDisplay(client)
+
 	closeSignal = make(chan bool)
 	animating = false
 }
