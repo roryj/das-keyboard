@@ -12,6 +12,7 @@ import (
 
 func main() {
 	output_file_path := flag.String("output", "result.xy", "the file to save the parsed file in")
+	from_file_path := flag.String("from", "", "the file in which to open as the template")
 	flag.Parse()
 
 	file, err := ioutil.TempFile(os.TempDir(), "*")
@@ -24,7 +25,12 @@ func main() {
 	defer os.Remove(filename)
 
 	// add the base input to the file
-	_, err = file.WriteString(baseTemplate)
+	template, err := getTemplateText(*from_file_path)
+	if err != nil {
+		log.Fatalf("failed to get the template data. %v", err)
+	}
+
+	_, err = file.WriteString(template)
 	if err != nil {
 		log.Fatalf("failed to write base template to file. %v", err)
 	}
@@ -86,6 +92,31 @@ func CaptureInputFromEditor(file *os.File) ([]byte, error) {
 	}
 
 	return bytes, nil
+}
+
+func getTemplateText(from_file_path string) (string, error) {
+	// if we are not basing this off another file, then we load in the default template
+	if from_file_path == "" {
+		return baseTemplate, nil
+	}
+
+	f, err := os.Open(from_file_path)
+	if err != nil {
+		return "", err
+	}
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+
+	// validate the file is parseable
+	_, err = parser.Parse(b)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
 
 // openFileInEditor opens filename in a text editor.
