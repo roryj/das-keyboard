@@ -54,7 +54,7 @@ curl http://localhost:8000?pattern=canada
 ```
 
 ## Sending Animations
-For animations, or arbitrary images, you use the URI path `load` with the query `path=<file_path>`. You can use an arbitrary number of file paths, and with multiple file paths this is considered an animation and is played in succession. You can also set the effect that each image is loaded with via the `effect=` query string. All possible options can be found in [effect.go](src/keyboard/effects.go). You can also set the delay between animation frames by setting the `delaySeconds=` query parameter
+For animations, or arbitrary images, you use the URI path `load` with the query `path=<file_path>`. You can use an arbitrary number of file paths, and with multiple file paths this is considered an animation and is played in succession. You can also set the effect that each image is loaded with via the `effect=` query string. All possible options can be found in [effects.go](src/keyboard/effects.go). You can also set the delay between animation frames by setting the `delaySeconds=` query parameter
 
 ### Animate Fish
 ```
