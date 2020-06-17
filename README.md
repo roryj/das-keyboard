@@ -1,6 +1,18 @@
 # Overview
 This package contains a server and editor turning your Das-Keyboard 5Q into a fully working display.
 
+## Requirements
+* [golang](https://golang.org/doc/install)
+* [das-keyboard software](https://www.daskeyboard.io/get-started/software/)
+
+# Development
+
+## Build
+
+```
+make
+```
+
 # Components
 
 ## Editor
@@ -46,32 +58,20 @@ For animations, or arbitrary images, you use the URI path `load` with the query 
 
 ### Animate Fish
 ```
-http://localhost:8080/load?path=resources/fish_1.xy&path=resources/fish_2.xy&path=resources/fish_3.xy&path=resources/fish_4.xy&path=resources/fish_5.xy&path=resources/fish_6.xy&path=resources/fish_7.xy&path=resources/fish_8.xy&path=resources/fish_9.xy"
+curl "http://localhost:8080/load?path=resources/fish_1.xy&path=resources/fish_2.xy&path=resources/fish_3.xy&path=resources/fish_4.xy&path=resources/fish_5.xy&path=resources/fish_6.xy&path=resources/fish_7.xy&path=resources/fish_8.xy&path=resources/fish_9.xy"
 ```
 
 ### Animate Fish with Delay
 ```
-http://localhost:8080/load?path=resources/fish_1.xy&path=resources/fish_2.xy&path=resources/fish_3.xy&path=resources/fish_4.xy&path=resources/fish_5.xy&path=resources/fish_6.xy&path=resources/fish_7.xy&path=resources/fish_8.xy&path=resources/fish_9.xy&delaySeconds=3"
+curl "http://localhost:8080/load?path=resources/fish_1.xy&path=resources/fish_2.xy&path=resources/fish_3.xy&path=resources/fish_4.xy&path=resources/fish_5.xy&path=resources/fish_6.xy&path=resources/fish_7.xy&path=resources/fish_8.xy&path=resources/fish_9.xy&delaySeconds=3"
 ```
 
 ### Animate Fish with Effect
 ```
-http://localhost:8080/load?path=resources/fish_1.xy&path=resources/fish_2.xy&path=resources/fish_3.xy&path=resources/fish_4.xy&path=resources/fish_5.xy&path=resources/fish_6.xy&path=resources/fish_7.xy&path=resources/fish_8.xy&path=resources/fish_9.xy&effect=breathe"
+curl "http://localhost:8080/load?path=resources/fish_1.xy&path=resources/fish_2.xy&path=resources/fish_3.xy&path=resources/fish_4.xy&path=resources/fish_5.xy&path=resources/fish_6.xy&path=resources/fish_7.xy&path=resources/fish_8.xy&path=resources/fish_9.xy&effect=breathe"
 ```
 
 ## Clear the Keyboard
 ```
 curl http://localhost:8000/clear
-```
-
-# Development
-
-## Requirements
-* [golang](https://golang.org/doc/install)
-* [das-keyboard software](https://www.daskeyboard.io/get-started/software/)
-
-## Build
-
-```
-make
 ```
