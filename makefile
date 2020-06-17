@@ -13,6 +13,6 @@ clean:
 	
 build:
 	mkdir -p ./bin/
-	go build -o ./bin/client ./cmd
-	go build -o ./bin/server ./server
-	go build -o ./bin/editor ./editor
+	go build -o ./bin/client ./src/cmd
+	go build -o ./bin/server ./src/server
+	go build -o ./bin/editor ./src/editor

@@ -5,8 +5,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/roryj/das-keyboard/colour"
-	"github.com/roryj/das-keyboard/images"
+	"github.com/roryj/das-keyboard/src/colour"
+	"github.com/roryj/das-keyboard/src/images"
 )
 
 const keyboardRows = 6

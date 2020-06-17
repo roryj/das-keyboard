@@ -3,7 +3,7 @@ package images
 import (
 	"fmt"
 
-	"github.com/roryj/das-keyboard/colour"
+	"github.com/roryj/das-keyboard/src/colour"
 )
 
 type KeyboardImage [][]colour.Hex

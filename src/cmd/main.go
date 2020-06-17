@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/roryj/das-keyboard/images"
-	"github.com/roryj/das-keyboard/keyboard"
+	"github.com/roryj/das-keyboard/src/images"
+	"github.com/roryj/das-keyboard/src/keyboard"
 )
 
 func main() {

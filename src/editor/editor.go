@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/roryj/das-keyboard/editor/parser"
+	"github.com/roryj/das-keyboard/src/editor/parser"
 )
 
 func main() {

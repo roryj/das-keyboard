@@ -12,10 +12,10 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/roryj/das-keyboard/display"
-	"github.com/roryj/das-keyboard/editor/parser"
-	"github.com/roryj/das-keyboard/images"
-	"github.com/roryj/das-keyboard/keyboard"
+	"github.com/roryj/das-keyboard/src/display"
+	"github.com/roryj/das-keyboard/src/editor/parser"
+	"github.com/roryj/das-keyboard/src/images"
+	"github.com/roryj/das-keyboard/src/keyboard"
 )
 
 var keyboardDisplay *display.Display

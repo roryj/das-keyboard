@@ -3,9 +3,9 @@ package display
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/roryj/das-keyboard/colour"
-	"github.com/roryj/das-keyboard/images"
-	"github.com/roryj/das-keyboard/keyboard"
+	"github.com/roryj/das-keyboard/src/colour"
+	"github.com/roryj/das-keyboard/src/images"
+	"github.com/roryj/das-keyboard/src/keyboard"
 	"go.uber.org/ratelimit"
 )
 

@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/roryj/das-keyboard/colour"
+	"github.com/roryj/das-keyboard/src/colour"
 	"go.uber.org/ratelimit"
 )
 
