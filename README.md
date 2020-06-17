@@ -7,10 +7,22 @@ This package contains a server and editor turning your Das-Keyboard 5Q into a fu
 
 # Development
 
+## Download dependencies
+
+```
+make deps
+```
+
 ## Build
 
 ```
 make
+```
+
+## Clean build artifacts
+
+```
+make clean
 ```
 
 # Components
