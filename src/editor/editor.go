@@ -16,7 +16,7 @@ func main() {
 	flag.Parse()
 
 	if *output_file_path == "" {
-		log.Fatal("from_file_path is a required field")
+		log.Fatal("-output is a required field")
 	}
 
 	file, err := ioutil.TempFile(os.TempDir(), "*")
