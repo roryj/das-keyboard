@@ -1,6 +1,8 @@
 package display
 
 import (
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/roryj/das-keyboard/src/colour"
@@ -68,6 +70,10 @@ func (d *Display) Start() {
 					if newColour == colour.NONE {
 						err := d.client.DeleteSignalAtZone(z)
 						if err != nil {
+							if strings.Contains(err.Error(), "404") {
+								// if we got a 404, this means the key is already cleared. We can safely ignore this failure
+								continue
+							}
 							log.Warnf("failed to clear signal @ %s: %v", z.GetZoneName(), err)
 						}
 					} else {
