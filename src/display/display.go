@@ -60,7 +60,10 @@ func (d *Display) Start() {
 					newColour := d.inputBuffer[rowIndex][columnIndex]
 					d.keyUpdateLimiter.Take()
 					log.Debugf("update needed for %d,%d", rowIndex, columnIndex)
-					z := keyboard.NewXYZone(uint(columnIndex)+1, uint(rowIndex))
+					z, err := keyboard.NewXYZone(uint(columnIndex)+1, uint(rowIndex))
+					if err != nil {
+						log.Warnf("failed creating the keyboard zone. %v", err)
+					}
 
 					if newColour == colour.NONE {
 						err := d.client.DeleteSignalAtZone(z)

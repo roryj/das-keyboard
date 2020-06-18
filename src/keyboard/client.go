@@ -1,6 +1,8 @@
 package keyboard
 
 import (
+	log "github.com/sirupsen/logrus"
+
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -155,7 +157,10 @@ func (c *keyboardClient) ClearAllSignals() {
 	var x, y uint
 	for x = 0; x < 24; x++ {
 		for y = 0; y < 6; y++ {
-			z := NewXYZone(x, y)
+			z, err := NewXYZone(x, y)
+			if err != nil {
+				log.Warnf("failed to create zone id. %v", err)
+			}
 			_ = c.DeleteSignalAtZone(z)
 		}
 	}
