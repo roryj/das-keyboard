@@ -68,13 +68,12 @@ func (d *Display) Start() {
 					}
 
 					if newColour == colour.NONE {
-						err := d.client.DeleteSignalAtZone(z)
+						_ = d.client.DeleteSignalAtZone(z)
 						if err != nil {
-							if strings.Contains(err.Error(), "404") {
-								// if we got a 404, this means the key is already cleared. We can safely ignore this failure
-								continue
+							// if we got a 404, this means the key is already cleared. We can safely ignore this failure
+							if !strings.Contains(err.Error(), "404") {
+								log.Warnf("failed to clear signal @ %s: %v", z.GetZoneName(), err)
 							}
-							log.Warnf("failed to clear signal @ %s: %v", z.GetZoneName(), err)
 						}
 					} else {
 						_, err := d.client.CreateSignal(z, keyboard.SET_COLOUR, newColour)
@@ -98,7 +97,8 @@ func (d *Display) Clear() {
 
 func (d *Display) listenForChange() {
 	for newInput := range d.updateChannel {
-		log.Infof("received update! %s", newInput.String())
+		log.Infof("received display update!")
+		log.Debugf("image: %s", newInput.String())
 		d.inputBuffer = newInput
 	}
 }
